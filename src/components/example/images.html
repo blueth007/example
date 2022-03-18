@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/FileSaver.js/2014-08-29/FileSaver.min.js"
+        type="application/javascript"></script>
+    <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <title>Images</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            position: relative;
+            width: 640px;
+            margin: 0 auto;
+        }
+
+        select,
+        input,
+        button {
+            font-size: 16px;
+        }
+
+        button {
+
+            padding: 4px 15px;
+        }
+
+        .imgShow {
+            position: relative;
+        }
+
+        .control {
+            margin: 12px 0;
+            font-size: 18px;
+        }
+
+        .title,
+        .content,
+        .footer {
+            position: absolute;
+            /* font-size: 32px;
+            font-weight: bold; */
+        }
+
+        .title {
+            /* height: 55px;
+            line-height: 55px;
+            top: 40px;
+            left: 235px; */
+        }
+
+        .content {
+            /*  top: 352px;
+            left: 58px;
+            width: 448px;
+            height: 314px;
+            border: 1px solid red; */
+        }
+
+        .footer {
+            /* top: 727px;
+                left: 87px;
+                width: 537px;
+                height: 241px; */
+            /* border: 1px solid red; */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- <input type="file" name="" id="" onchange="getBase64(event)" > -->
+        <div class="control">
+            <label for="target">
+                目标选项：
+                <select name="target" id="target" onchange="selectTarget(event)">
+                    <option value="title">标题</option>
+                    <option value="content">内容</option>
+                    <option value="footer">结尾</option>
+                </select>
+            </label>
+            <label for="type">
+                类型选项：
+                <select name="type" id='type' onchange="selectType(event)">
+                    <option value="fontSize">字体</option>
+                    <option value="fontWeight">字重</option>
+                    <option value="top">位置偏移上</option>
+                    <option value="left">位置便宜左</option>
+                    <option value="height">高度</option>
+                    <option value="width">宽度</option>
+                </select>
+            </label>
+
+            <label for="size">
+                大小： <input type="number" value="16" id='size' placeholder="大小" onchange="setSize()">
+            </label>
+            <label for="">
+                <button onclick="setSize()">确定设置</button>
+            </label>
+            <label for="">
+                <button onclick="download()">下载</button>
+            </label>
+            <label for="">
+                <button onclick="toggleImg()">切换图片</button>
+            </label>
+            <label for="">
+                <button onclick="addItem()">新增一个框</button>
+            </label>
+
+        </div>
+        <div class="imgShow" id="toImage">
+
+            <!-- <img id="bg" width="640" height="1008"
+            -->
+            <img src="http://159.75.89.210/wp-content/uploads/2022/03/1.jpg" alt="" srcset="" id="bgImgs" width="640"
+                height="1008">
+            <div class="title" contenteditable
+                style="height: 55px;top: 40px;left: 235px;  font-size: 32px;  font-weight: bold">
+                2022年2月18日
+            </div>
+            <div class="content" contenteditable
+                style="top: 352px;left: 58px;width: 448px;height: 314px;font-size: 32px;font-weight: bold">
+
+                这是那日的内容
+
+            </div>
+            <div class="footer" contenteditable
+                style="top: 727px; left: 87px; width: 537px;height: 241px;  font-size: 32px;font-weight: bold">
+                这是结尾提醒
+            </div>
+        </div>
+        <div id="my-canvas"></div>
+    </div>
+    <script>
+        var target = 'title', type = 'fontSize', size = 18, index = 0, pid = 0;
+        var imgs = [
+            "http://159.75.89.210/wp-content/uploads/2022/03/3.jpg",
+            "http://159.75.89.210/wp-content/uploads/2022/03/2.jpg",
+            "http://159.75.89.210/wp-content/uploads/2022/03/1.jpg"];
+
+        //   var imgs = ["./1.jpg", "./2.jpg", "./3.jpg"]
+       // document.querySelector("#bgImgs").src = imgs[0] || "http://159.75.89.210/wp-content/uploads/2022/03/3.jpg"
+
+        function selectTarget(event) {
+            target = event.target.value
+            var old = document.querySelector('.' + target).style[type];
+            console.log(old);
+            if (old) {
+                document.querySelector('#size').value = old.replace(/\D+/, '') || 0;
+            } else {
+                document.querySelector('#size').value = 0
+            }
+        }
+
+        function selectType(event) {
+            type = event.target.value;
+            var old = document.querySelector('.' + target).style[type];
+            console.log(old);
+            if (old) {
+                document.querySelector('#size').value = old.replace(/\D+/, '') || 0;
+            } else {
+                document.querySelector('#size').value = 0
+            }
+        }
+        function setSize() {
+            size = document.querySelector('#size').value;
+            console.log(size)
+            document.querySelector('.' + target).style[type] = size + 'px'
+        }
+
+        function download() {
+            var html = document.querySelector("#toImage")
+            let old = html.getElementsByTagName("img")[0].src
+            getImgBase64(old).then(res => {
+                html.getElementsByTagName("img").src = res
+                new html2canvas(html, {
+                    backgroundColor: "transparent", //背景图片透明
+                    allowTaint: true, //跨域
+                    useCORS: true //跨域
+                }).then(canvas => {
+                    console.log(canvas);
+                    let time = new Date() - 1;
+                    // let a = document.createElement("a");
+                    // a.href = canvas.toDataURL();
+                    // //设置下载文件的名字
+
+                    // a.download = time;
+                    // //点击
+                    // a.click();
+                    canvas.toBlob(blob => {
+                        saveAs(blob, time + '.png')
+                    })
+                });
+            })
+        }
+
+        function getImgBase64(img) {
+            function getBase64Image(img) {
+                let canvas = document.createElement("canvas");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                let ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, img.width, img.height);
+                let ext = img.src.substring(img.src.lastIndexOf(".") + 1).toLowerCase();
+                let dataURL = canvas.toDataURL("image/" + ext);
+                return dataURL;
+            }
+            var image = new Image();
+            // image.setAttribute('crossOrigin', 'anonymous'); //解决跨域 
+            image.crossOrigin = 'anonymous';
+            image.src = img + '?v=' + Math.random();
+            return new Promise((resolve, reject) => {
+                image.onload = function () {
+                    resolve(getBase64Image(image));
+                    //将base64传给done上传处理 
+                }
+            });
+        };
+
+
+        function getBase64(e) {
+            var file = e.target.files[0]
+            return new Promise((resolve, reject) => {
+                ///FileReader类就是专门用来读文件的
+                const reader = new FileReader()
+                //开始读文件
+                //readAsDataURL: dataurl它的本质就是图片的二进制数据， 进行base64加密后形成的一个字符串，
+                reader.readAsDataURL(file)
+                // 成功和失败返回对应的信息，reader.result一个base64，可以直接使用
+                reader.onload = () => {
+                    resolve(reader.result)
+                    console.log(reader.result)
+                }
+                // 失败返回失败的信息
+                reader.onerror = error => reject(error)
+            })
+        }
+        function toggleImg() {
+            if (pid == 2) { pid = 0 } else {
+                pid++
+            }
+            let img = imgs[pid];
+            document.querySelector("#bgImgs").src = img
+
+
+        }
+        function addItem() {
+            var dom = document.createElement('div')
+            dom.setAttribute("class", `new${index}`)
+            dom.setAttribute("contenteditable", true)
+            dom.style = "position: absolute;top: " + (520 + index * 10) + "px; left: " + (280 + index * 30) + "px; width: 200px;height: 200px;  font-size: 32px;font-weight: bold"
+            dom.innerText = "这是新增框" + index
+
+            document.querySelector("#toImage").appendChild(dom)
+            // <option value="footer">结尾</option>
+            var el = document.createElement('option')
+            el.innerText = "New" + index;
+            el.setAttribute('value', 'new' + index)
+            document.querySelector("#target").add(el)
+            index++;
+        }
+
+    </script>
+</body>
+
+</html>

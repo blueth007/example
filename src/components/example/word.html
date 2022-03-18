@@ -1,0 +1,232 @@
+<!--
+ * @Author: Blueth007
+ * @Date: 2022-03-09 11:18:44
+ * @LastEditTime: 2022-03-10 16:59:46
+ * @Description: 
+ * MIT
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js"></script>
+
+    <title>Word</title>
+    <style>
+        body {
+            font-size: 16px;
+        }
+
+        #word {
+            width: 1400px;
+            height: 100vh;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        #imgs img {
+            width: 100%;
+        }
+
+        .word p {
+            margin-bottom: 0.1in;
+            direction: ltr;
+            line-height: 115%;
+            text-align: justify;
+            orphans: 0;
+            widows: 0;
+            background: transparent
+        }
+    </style>
+</head>
+
+<body>
+
+    <div>
+        <p>时间： <input type="date" name="date" onchange="selectTime(event)"> </p>
+        <p>地点 <input type="text" name="address" onchange="inputAddress(event)"> </p>
+        <p>标题：<input type="text" name="title" placeholder="标题" onchange="titleName(event)"></p>
+        <p>上传图片：<input type="file" placeholder="图片" onchange="pictureSelect(event)" multiple></p>
+        <p><button onclick="download()">下载</button></p>
+    </div>
+    <hr>
+    <div id="word" link="#000080" vlink="#800000" dir="ltr">
+        <p align="center" style="margin-top: 0.17in; margin-bottom: 0.04in; line-height: 100%;text-align: center;">
+            <font face="&#31561;&#32447; Light">
+                <font size="4" style="font-size: 16pt"><span lang="zh-CN"><b>
+                            <font size="5" style="font-size: 18pt" id="date">2022年2月27日</font>
+                            <font size="5" style="font-size: 18pt" id="address">深圳</font>
+                            <font size="5" style="font-size: 18pt" id="title">非检查图</font>
+                        </b></span></font>
+            </font>
+        </p>
+
+        <p id="pc0" style="margin-left: -0.69in; margin-bottom: 0in; line-height: 100%">
+            <img src="https://boot-img.xuexi.cn/image/1004/process/11ba2e262b534f99bbb2e8bfa2f6fcdb.jpg" name="å¾ç 2"
+                align="bottom" hspace="1" width="687" height="386" border="0" />
+        </p>
+
+        <p style="margin-left: -0.69in; margin-bottom: 0in; line-height: 100%" id="pc1">
+            <img id="pc1" src="https://boot-img.xuexi.cn/image/1004/process/11ba2e262b534f99bbb2e8bfa2f6fcdb.jpg"
+                name="å¾ç 1" align="bottom" hspace="1" width="694" height="390" border="0" />
+        </p>
+
+    </div>
+
+    <script>
+        function selectTime(e) {
+            console.log(e.target.value);
+            document.getElementById("date").innerHTML = e.target.value
+        }
+
+        function inputAddress(e) {
+            console.log(e.target.value);
+            document.getElementById("address").innerHTML = e.target.value
+        }
+
+        function titleName(e) {
+            console.log(e.target.value);
+            document.getElementById("title").innerHTML = e.target.value
+        }
+
+        function pictureSelect(e) {
+            // console.log(e.target.files);
+            let files = e.target.files
+            let urls = getFileUrl(files)
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                readAsDataURL(file, 'pc' + i)
+            }
+
+        }
+
+        function readAsDataURL(file, id) {
+            if (typeof FileReader == 'undefined') //判断浏览器是否支持 fileReader
+            {
+                result.innerHTML = "<p>抱歉，你的浏览器不支持 FileReader</p>";
+                return false;
+            }
+
+            if (!/image\/\w+/.test(file.type)) //判断获取的是否为图片文件
+            {
+                alert("请确保文件为图像文件");
+                return false;
+            }
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function (e) {
+                var result = document.getElementById(id); //写入dom
+                result.innerHTML = '<img src="' + this.result +
+                    '" alt=""align="bottom" hspace="1" width="690" height="380" border="0" />'
+            }
+        }
+        //获取input[file]图片的url Important
+        function getFileUrl(files) {
+            var urls = [];
+            var agent = navigator.userAgent;
+            for (let i = 0; i < 2; i++) {
+                const file = files[i];
+                let url;
+                if (agent.indexOf("MSIE") >= 1) {
+                    url = file.value;
+                    urls.push(url)
+                } else if (agent.indexOf("Firefox") > 0) {
+                    url = window.URL.createObjectURL(file);
+                    urls.push(url)
+                } else if (agent.indexOf("Chrome") > 0) {
+                    url = window.URL.createObjectURL(file);
+                    urls.push(url)
+                }
+            }
+            return urls;
+        }
+        function download() {
+            let time = new Date() - 1;
+            let outHTML = document.getElementById("word").outerHTML;
+            var html =
+                "<!DOCTYPE html><html><head><meta charset='utf-8' /><style>@page { size: 8.27in 11.69in; margin-left: 1.25in; margin-right: 1.25in; margin-top: 1in; margin-bottom: 1in }p {margin-bottom: 0.1in;direction: ltr;line-height: 115%;text-align: justify;orphans: 0;widows: 0;background: transparent}</style>" +
+                "</head><body>" + outHTML +
+                "</body></html>";
+            var blob = new Blob([html], {
+                type: "application/msword;charset=utf-8"
+            });
+            saveAs(blob, time + ".doc");
+            // format("word", "file:" + time)
+        }
+
+        function format(id, fileName) {
+            var mhtml = {
+                top: "Mime-Version: 1.0\nContent-Base: " + location.href +
+                    "\nContent-Type: Multipart/related; boundary=\"NEXT.ITEM-BOUNDARY\";type=\"text/html\"\n\n--NEXT.ITEM-BOUNDARY\nContent-Type: text/html; charset=\"utf-8\"\nContent-Location: " +
+                    location.href + "\n\n<!DOCTYPE html>\n<html>\n_html_</html>",
+                head: "<head>\n<meta charset='utf-8' />\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n<style>\n_styles_\n</style>\n</head>\n",
+                body: "<body>_body_</body>"
+            }
+            var options = {
+                maxWidth: 624
+            };
+            var content = document.getElementById(id);
+            // Embed all images using Data URLs
+            var images = Array();
+            var img = content.getElementsByTagName('img');
+            for (var i = 0; i < img.length; i++) {
+                // Calculate dimensions of output image
+                var w = Math.min(img[i].width, options.maxWidth);
+                var h = img[i].height * (w / img[i].width);
+                // Create canvas for converting image to data URL
+                var canvas = document.createElement("CANVAS");
+                canvas.width = w;
+                canvas.height = h;
+                // Draw image to canvas
+                var context = canvas.getContext('2d');
+                context.drawImage(img[i], 0, 0, w, h);
+                // Get data URL encoding of image
+                var uri = canvas.toDataURL("image/png");
+                // $(img[i]).attr("src", img[i].src);
+                // img[i].src=""
+                img[i].width = w;
+                img[i].height = h;
+                // Save encoded image to array
+                images[i] = {
+                    type: uri.substring(uri.indexOf(":") + 1, uri.indexOf(";")),
+                    encoding: uri.substring(uri.indexOf(";") + 1, uri.indexOf(",")),
+                    // location: $(img[i]).attr("src"),
+                    location: img[i].src,
+                    data: uri.substring(uri.indexOf(",") + 1)
+                };
+            }
+
+            //   Prepare bottom of mhtml file with image data
+            var mhtmlBottom = "\n";
+            for (var i = 0; i < images.length; i++) {
+                mhtmlBottom += "--NEXT.ITEM-BOUNDARY\n";
+                mhtmlBottom += "Content-Location: " + images[i].location + "\n";
+                mhtmlBottom += "Content-Type: " + images[i].type + "\n";
+                mhtmlBottom += "Content-Transfer-Encoding: " + images[i].encoding + "\n\n";
+                mhtmlBottom += images[i].data + "\n\n";
+            }
+            mhtmlBottom += "--NEXT.ITEM-BOUNDARY--";
+
+            //TODO: load css from included stylesheet
+            var styles =
+                "@page { size: 8.27in 11.69in; margin-left: 1.25in; margin-right: 1.25in; margin-top: 1in; margin-bottom: 1in }p {margin-bottom: 0.1in;direction: ltr;line-height: 115%;text-align: justify;orphans: 0;widows: 0;background: transparent}";
+
+            // Aggregate parts of the file together
+            var fileContent = mhtml.top.replace("_html_", mhtml.head.replace("_styles_", styles) + mhtml.body
+                .replace(
+                    "_body_", content.outerHTML)) + mhtmlBottom;
+            var blob = new Blob([fileContent], {
+                type: "application/msword;charset=utf-8"
+            });
+            saveAs(blob, fileName + ".doc");
+
+        }
+    </script>
+</body>
+
+</html>
