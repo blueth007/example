@@ -1,14 +1,15 @@
 <!--
  * @Author: Blueth007
  * @Date: 2022-03-07 17:02:45
- * @LastEditTime: 2022-03-15 12:34:19
+ * @LastEditTime: 2022-03-29 10:49:43
  * @Description: 
  * MIT
 -->
 
 <template>
   <div class="office_container">
-    <ul class="nav_list">
+    <Navigation></Navigation>
+    <ul class="main nav_list">
       <li>
         <router-link class="linkItem" to="/office/docPreview">docx</router-link>
       </li>
@@ -31,7 +32,10 @@
 </template>
 
 <script>
-export default {};
+import Navigation from "@/views/Navigation.vue";
+export default {
+  components: { Navigation },
+};
 </script>
 
 <style lang="scss" scoped>

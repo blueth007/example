@@ -3,11 +3,11 @@
     <div class="control">
       <p><input type="file" @change="inputFile" value="本地pdf" /></p>
       <p>
-        <input type="text" @change="remoteFile" /><button
-          @click="_loadFile(pdf_src)"
-        >
-          远程pdf地址
-        </button>
+        <input
+          type="text"
+          @change="remoteFile"
+          placeholder="http://...."
+        /><button @click="_loadFile(pdf_src)">远程pdf地址</button>
       </p>
       <p><button @click="openPdf()">网址内另开页面打开</button></p>
     </div>

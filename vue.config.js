@@ -1,7 +1,7 @@
 /*
  * @Author: Blueth007
  * @Date: 2022-03-15 15:43:54
- * @LastEditTime: 2022-03-18 17:18:48
+ * @LastEditTime: 2022-03-31 16:18:22
  * @Description:
  * MIT
  */
@@ -26,6 +26,14 @@ module.exports = {
         pathRewrite: {
           // 把匹配到的/api这段开头 替换成 /
           "^/api": "/",
+        },
+      },
+      "/music": {
+        target: "https://autumnfish.cn",
+        changeOrigin: true, // 开发环境才开启反向代理, 运行(生产)环境不开启
+        pathRewrite: {
+          // 把匹配到的/api这段开头 替换成 /
+          "^/music": "/",
         },
       },
     },

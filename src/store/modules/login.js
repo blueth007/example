@@ -1,14 +1,14 @@
 /*
  * @Author: Blueth007
  * @Date: 2022-03-01 16:41:35
- * @LastEditTime: 2022-03-02 15:14:47
+ * @LastEditTime: 2022-03-25 17:10:32
  * @Description:
  * MIT
  */
 const state = {
   isLogin: false,
   userName: "admin",
-  password: "123456",
+  password: "1234567",
 };
 
 const mutations = {

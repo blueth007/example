@@ -1,31 +1,35 @@
 <!--
  * @Author: Blueth007
  * @Date: 2022-03-07 15:37:36
- * @LastEditTime: 2022-03-07 16:47:53
+ * @LastEditTime: 2022-03-29 10:53:50
  * @Description: 
  * MIT
 -->
 <template>
-  <main class="content" style="max-width: 1140px">
-    <div class="main-area">
-      <article>
-        <ul>
-          <li v-for="item in lists" :key="item.id">
-            <router-link :to="'/article/' + item.id">
-              {{ item.title }}
-            </router-link>
-          </li>
-        </ul>
-      </article>
-    </div>
-    <div class="sidebar">sidebar</div>
-  </main>
+  <div>
+    <Navigation></Navigation>
+    <main class="main content">
+      <div class="main-area">
+        <article>
+          <ul>
+            <li v-for="item in lists" :key="item.id">
+              <router-link :to="'/article/' + item.id">
+                {{ item.title }}
+              </router-link>
+            </li>
+          </ul>
+        </article>
+      </div>
+      <div class="sidebar">sidebar</div>
+    </main>
+  </div>
 </template>
 
 <script>
+import Navigation from "./Navigation.vue";
 export default {
   name: "Article",
-  components: {},
+  components: { Navigation },
   data() {
     return {
       lists: [
@@ -58,11 +62,10 @@ export default {
 <style lang="scss" scoped>
 .content {
   position: relative;
-  width: 100%;
-  min-height: 100vh;
-  margin: 0 auto;
-
   display: flex;
+  width: 100%;
+  max-width: 1024px;
+  min-height: calc(100vh - 5.1rem);
 
   .main-area {
     position: relative;
@@ -72,7 +75,6 @@ export default {
     border: 1px solid #15d34e;
 
     article {
-      height: 100%;
       background: #ffff;
       padding: 2.68rem;
       font-size: 16px;
